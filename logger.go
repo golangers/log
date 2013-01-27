@@ -34,8 +34,11 @@ const (
 	LEVEL_ERROR
 	LEVEL_CRITICAL
 	LEVEL_PANIC
-	LEVEL_FATAL
-	LEVEL_ALL = LEVEL_DEBUG | LEVEL_INFO | LEVEL_WARN | LEVEL_ERROR | LEVEL_CRITICAL | LEVEL_PANIC | LEVEL_FATAL
+)
+
+const (
+	LEVEL_FATAL = "[FATAL]"
+	LEVEL_ALL   = LEVEL_DEBUG | LEVEL_INFO | LEVEL_WARN | LEVEL_ERROR | LEVEL_CRITICAL | LEVEL_PANIC
 
 	//默认日志级别为
 	LEVEL_DEFAULT = LEVEL_ALL
@@ -50,7 +53,6 @@ var (
 		"error":    LEVEL_ERROR,
 		"critical": LEVEL_CRITICAL,
 		"panic":    LEVEL_PANIC,
-		"fatal":    LEVEL_FATAL,
 		"all":      LEVEL_ALL,
 	}
 
@@ -61,7 +63,6 @@ var (
 		LEVEL_ERROR:    "[ERROR]",
 		LEVEL_CRITICAL: "[CRITICAL]",
 		LEVEL_PANIC:    "[PANIC]",
-		LEVEL_FATAL:    "[FATAL]",
 	}
 )
 
@@ -84,8 +85,8 @@ func packageOf(file string) string {
 
 func New(out io.Writer, prefix string, flag int) *Logger {
 	return &Logger{
-		log.Logger: log.New(out, prefix, flag),
-		level:      LEVEL_DEFAULT,
+		Logger: log.New(out, prefix, flag),
+		level:  LEVEL_DEFAULT,
 	}
 }
 
@@ -96,8 +97,8 @@ func (l *Logger) SetOutput(w io.Writer) {
 	levels := l.Levels()
 	l.mu.Unlock()
 	*l = Logger{
-		log.Logger: log.New(w, prefix, flags),
-		level:      levels,
+		Logger: log.New(w, prefix, flags),
+		level:  levels,
 	}
 }
 
@@ -193,28 +194,16 @@ func (l *Logger) Panicf(format string, v ...interface{}) {
 }
 
 func (l *Logger) Fatal(v ...interface{}) {
-	if LEVEL_FATAL&l.level == 0 {
-		return
-	}
-
-	l.print(logPrefixs[LEVEL_FATAL]+" ", v...)
+	l.print(LEVEL_FATAL+" ", v...)
 	os.Exit(1)
 }
 
 func (l *Logger) Fatalln(v ...interface{}) {
-	if LEVEL_FATAL&l.level == 0 {
-		return
-	}
-
-	l.println(logPrefixs[LEVEL_FATAL]+" ", v...)
+	l.println(LEVEL_FATAL+" ", v...)
 	os.Exit(1)
 }
 
 func (l *Logger) Fatalf(format string, v ...interface{}) {
-	if LEVEL_FATAL&l.level == 0 {
-		return
-	}
-
-	l.printf(logPrefixs[LEVEL_FATAL]+" ", format, v...)
+	l.printf(LEVEL_FATAL+" ", format, v...)
 	os.Exit(1)
 }
