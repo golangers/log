@@ -19,6 +19,18 @@ func SetOutput(w io.Writer) {
 	std.SetOutput(w)
 }
 
+func Print(v ...interface{}) {
+	std.Print(v...)
+}
+
+func Println(v ...interface{}) {
+	std.Println(v...)
+}
+
+func Printf(format string, v ...interface{}) {
+	std.Printf(format, v...)
+}
+
 func Debug(v ...interface{}) {
 	std.Debug(v...)
 }
